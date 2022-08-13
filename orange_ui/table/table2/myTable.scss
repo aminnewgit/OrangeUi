@@ -1,0 +1,107 @@
+.cursor-pointer{
+  cursor:pointer;
+}
+.my-table{
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--grey-border);
+  .mt-body-warp{
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+  }
+  .mt-body{
+    table-layout: fixed;
+    //border-collapse: separate;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .mt-header-warp{
+    background-color: #eff7f7;
+    width: 100%;
+    border-bottom: 1px solid var(--grey-border);
+  }
+  .mt-header{
+    table-layout: fixed;
+    //border-collapse: separate;
+    border-collapse: collapse;
+    //width: calc(100% - 17px);
+    &-tr{
+      //background-color: #eff7f7;
+      height: 34px;
+    }
+    &-th{
+      font-size: 14px;
+      //background-color: #909399;
+      padding: 12px 0;
+      border-left: 1px solid var(--grey-border);
+      &-cell{
+        padding: 0 10px;
+        line-height: 28px;
+      }
+    }
+    &-th:nth-child(1){
+      border-left: none;
+    }
+  }
+  .mt-row{
+    font-size: 14px;
+    &-cell{
+      padding: 0 10px;
+      color: #606266;
+      line-height: 28px;
+    }
+    &-td{
+      font-weight: normal;
+      padding: 12px 0;
+      border-left: 1px solid var(--grey-border);
+      border-bottom: 1px solid var(--grey-border);
+    }
+    &-td:nth-child(1){
+      border-left:none;
+    }
+    &-input{
+      &-input{
+        width: 95%;
+      }
+    }
+    &-operation{
+      .mt-operation-btn{
+        cursor: pointer;
+        color: #409eff;
+        margin-left: 15px;
+      }
+      .mt-operation-btn:nth-child(1){
+        margin-left: 0;
+      }
+      .mt-row-cell{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    &-select{
+
+    }
+  }
+  .mt-row:hover{
+    background-color: #F5F7FA;
+  }
+  .mt-empty{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-size: 16px;
+    color: var(--grey-font-color);
+  }
+
+  table thead, tbody tr {
+
+    width:100%;
+    table-layout:fixed;//core code
+  }
+
+
+}

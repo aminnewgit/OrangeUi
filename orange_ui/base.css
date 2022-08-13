@@ -1,0 +1,188 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+body{
+  margin: 0;
+  padding: 0;
+}
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  background-color: #f3f3f4;
+}
+.mr-10{
+  margin-right: 10px;
+}
+.font-red{
+  color: red;
+}
+
+/*bootstrap 按钮边框*/
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: none;
+}
+
+.f{display: flex}
+.f-col{display: flex;flex-direction: column}
+.f-cc{display: flex;align-items: center;justify-content: center}
+.ai-c{align-items: center;}
+.ai-s{align-items: flex-start}
+.jc-c{justify-content: center;}
+.jc-end{justify-content: flex-end}
+.jc-between{justify-content: space-between}
+.f-wrap{flex-wrap: wrap;}
+
+
+/*文字省略*/
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+
+
+
+.list-item {
+  transition: all 0.8s ease;
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-leave-active {
+  position: absolute;
+}
+
+
+.form-line {
+  display: block;
+  margin-bottom: 15px;
+}
+.form-line .el-select{
+  width: 100%;
+
+}
+
+.w1, .w2, .w3, .w4, .w5,
+.w6, .w7, .w8, .w9, .w10,
+.w11, .w12, .w13, .w14, .w15,
+.w16, .w17, .w18, .w19, .w20{
+  display: inline-block!important;
+}
+
+.w1{width: 5%;}
+.w2{width: 10%;}
+.w3{width: 15%;}
+.w4{width: 20%;}
+.w5{width: 25%;}
+.w6{width: 30%;}
+.w7{width: 35%;}
+.w8{width: 40%;}
+.w9{width: 45%;}
+.w10{width: 50%;}
+.w11{width: 55%;}
+.w12{width: 60%;}
+.w13{width: 65%;}
+.w14{width: 70%;}
+.w15{width: 75%;}
+.w16{width: 80%;}
+.w17{width: 85%;}
+.w18{width: 90%;}
+.w19{width: 95%;}
+.w20{width: 100%;}
+
+.w100{
+  width: 100%;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 20px;
+}
+
+.modal-bottom-btn-line{
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  padding: 20px;
+  z-index: 5501;
+
+}
+
+.c-modal-title{
+  font-size: 18px;
+}
+
+.page-card {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  padding: 20px 20px 23px 20px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+.page-card .el-select .el-input__inner{
+  padding-right: 10px !important;
+}
+
+.base-page{
+  min-width: 1200px;
+  padding: 20px;
+  margin: 20px;
+  background: #fff;
+  min-height: calc(100% - 40px);
+}
+.base-page .el-form-item{
+  margin-right: 0 !important;
+  margin-bottom: 0;
+  margin-left: 20px;
+}
+
+.com-warp{
+  padding: 20px;
+}
+.order-unpaid{
+  color: #E6A23C
+}
+.order-toBeSigned{
+  color: #409EFF
+}
+.order-signed{
+  color: #67C23A
+}
+.order-apply{
+  color: #409EFF
+}
+.order-refunded{
+  color: #F56C6C
+}
+.order-closed{
+  color: #909399
+}
+
+.el-scrollbar__view{
+  height: 100%;
+}

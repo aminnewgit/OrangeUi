@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" id="icon" href="data:image/ico;base64,aWNv">
+  <script src="/static/vue.js"></script>
+  <title>测试页面</title>
+  <style>
+    div{
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+<img src="" id="logo" alt="" style="width:20px">
+<div id="app">
+  <h1>Orange简易服务器</h1>
+  <ul>
+    <li>web服务器</li>
+    <li>webSocket服务器</li>
+  </ul>
+  <div>本服务器使用python selectors技术实现并发功能</div>
+  <div>当前服务器连接数:<span id="cNum"></span></div>
+  <div>
+    <div>
+      <button @click="selFile">选择文件</button>
+      <input type="file"
+             style="display: none" multiple
+             @change="openFile" ref="upload"/>
+    </div>
+    <div v-if="size">
+      <div>
+        <span>文件名:{{name}}</span>
+        <span>文件大小:{{size}}</span>
+      </div>
+      <div>
+        <button @click="upload">上传</button>
+        <button @click="uploadChunk">分块上传</button>
+      </div>
+      <div>{{uploadMsg}}</div>
+      <img :src="imgSrc" alt="" ref="imgShow" style="max-width: 200px">
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<script>
+  let un = undefined
+  const utils = {
+    //动态加载favicon 这样可以控制缓存favicon
+    getBase64Image(img){
+      let canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      let ext = img.src.substring(img.src.lastIndexOf(".")+1).toLowerCase();
+      let dataURL = canvas.toDataURL("image/"+ext);
+      return dataURL;
+    },
+    changeIcon(){
+      let link = document.head.querySelector("#icon");
+      let image = new Image();
+      image.src = '/favicon.ico';
+      image.onload = ()=>{
+        let du = this.getBase64Image(image)
+        link.href = du
+      }
+    },
+    changeIcon2(){
+      const link = document.head.querySelector("#icon");
+      const img = this.e('#logo')
+      fetch('/favicon.ico').then(function(response) {
+        return response.blob();
+      }).then(function(blob) {
+        const objectURL = URL.createObjectURL(blob);
+        link.href = objectURL;
+        img.src = objectURL
+      });
+    },
+    changeIcon3: async function(){
+      const link = document.head.querySelector("#icon");
+      const img = this.e('#logo')
+      let resp = await fetch('/favicon.ico')
+      let blob = await resp.blob()
+      const objectURL = URL.createObjectURL(blob);
+      link.href = objectURL;
+      img.src = objectURL
+    },
+
+    ajaxJson(method, path, data,ok){
+      let r = new XMLHttpRequest()
+      r.open(method, path, true)
+      if(method === 'post'){
+        r.setRequestHeader('Content-Type', 'application/json')
+        data = JSON.stringify(data)
+      }
+      r.onreadystatechange = function(){
+        if(r.readyState === 4){
+          r = JSON.parse(r.response)
+          ok(r)
+        }
+      }
+      r.send(data)
+    },
+
+    ajaxFormData(path,form,ok){
+      let xhr = new XMLHttpRequest()
+      xhr.open('post',path, true)
+      xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){ok(xhr.response)}
+      }
+      xhr.send(form)
+    },
+
+    ajaxSend(path,data,ok,){
+      let xhr = new XMLHttpRequest()
+      xhr.open('post',path, true)
+      // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){ok(xhr.response)}
+      }
+      xhr.send(data)
+    },
+    e(sel){
+      return document.querySelector(sel)
+    },
+    getServerState(){
+      this.ajaxJson('get','/live/admin/cNum','',(r)=>{
+        let cNum = this.e('#cNum')
+        console.log(r.d)
+        cNum.innerHTML = r.d
+      })
+    },
+    wsLink(){
+      setTimeout(()=>{
+         console.log(("WebSocket" in window))
+      },500)
+      // 打开一个 web socket
+
+      let ws = new WebSocket("wss://dev.zhihuigutian.cn/live/wsTest")
+      ws.onopen = function(){console.log('ws 已连接')}
+      ws.onmessage = function (evt){
+        let d = JSON.parse(evt.data)
+        console.log(d);
+      }
+      ws.onclose = function(){
+        console.log("连接已关闭...");
+      }
+    }
+  }
+  utils.changeIcon3()
+  function readAsArrayBuff(file){
+    return new Promise(resolve => {
+      const fileReader = new FileReader()
+      fileReader.readAsArrayBuffer(file)
+      fileReader.onload = function () {
+        resolve(fileReader.result)
+      }
+    })
+  }
+  let vm = new Vue({
+    el:'#app',
+    data:{
+      size:'',
+      name:'',
+      imgSrc:undefined,
+      uploadMsg:''
+    },
+    methods:{
+      formatSize(size){
+        let unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+        let srcSize = parseFloat(size)
+        let index = Math.floor(Math.log(srcSize)/Math.log(1024))
+        size = srcSize/Math.pow(1024,index)
+        //  保留的小数位数
+        size = size.toFixed(2);
+        return size+unitArr[index];
+      },
+      selFile(){
+        let input = this.$refs.upload
+        input.click()
+      },
+      openFile(){
+        let input = this.$refs.upload
+        let file = input.files[0]
+        if(file===undefined){
+          this.imgSize = undefined
+          this.imgName = undefined
+          this.imgSrc = undefined
+          return
+        }
+        this.size = this.formatSize(file.size)
+        this.name = file.name
+        if(file.type.includes('image')){
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(file);
+          fileReader.onload = ()=>{
+            this.imgSrc = fileReader.result
+          }
+        }
+        else{
+          this.imgSrc = un
+        }
+      },
+      uploadFormData(){
+        let input = this.$refs.upload
+        let form = new FormData
+        form.append('test','123')
+        let files = input.files
+        for(let i=0;i<files.length;i++){
+          form.append('file',files[i],files[i].name)
+        }
+        form.append('test',123)
+
+        utils.ajaxFormData('/upload/img',form,r=>{
+          console.log(r)
+          // utils.ajaxUpload('/upload/img',input.files,r=>{
+          //   console.log(r)
+          // })
+        })
+        // utils.ajaxUpload('/upload/img',input.files,r=>{
+        //   console.log(r)
+        // })
+
+      },
+      uploadImg(){
+        let input = this.$refs.upload
+        let img = input.files[0]
+        if(img===undefined){return}
+        this.ajaxUploadFile('/upload/img',img,r=>{
+          console.log(r)
+
+          // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+          xhr.onreadystatechange = function(){
+            if(xhr.readyState === 4){ok(xhr.response)}
+          }
+          xhr.upload.onprogress = onProgress
+          xhr.upload.onloadstart = function(){
+            startTime = new Date().getTime()   //开始时间
+          }
+           xhr.open('post',path, true)
+          xhr.send(file)
+        })
+      },
+
+      ajax(method,path,ok,err=()=>{}){
+        let xhr = new XMLHttpRequest()
+        xhr.onload = r=>{ok(r)}
+        xhr.onError = r=>{err(r)}
+        xhr.open('post',path, true)
+        return xhr
+      },
+      async upload(){
+        const file = this.$refs.upload.files[0]
+        const path = `/upload?name=${file.name}`
+        const ab = await readAsArrayBuff(file)
+        this.ajaxUpload(path,ab,r=>{
+          console.log(r)
+        },null,this.progress)
+      },
+      progress(e,speed,time){
+        let percent = ((e.loaded/e.total)*100).toFixed(2)
+        this.uploadMsg = `${percent}%  ${speed}/s ${time}s`
+      },
+
+      ajaxUpload(path,data,ok,err,onprogress){
+        let startTime
+        const xhr = new XMLHttpRequest()
+        xhr.onload = r=>{ok(xhr.response)}
+        if(!err){err=r=>{console.log(r)}}
+        xhr.onerror =  r=>{err('network error')}
+        xhr.onreadystatechange = ()=>{
+          if((xhr.readyState === 3) && ( xhr.status !== 200)){
+            err(`response error ${xhr.status} ${xhr.statusText}`)
+          }
+        }
+        if(onprogress){
+          xhr.upload.onprogress = e=>{
+            let time = ((new Date().getTime()) - startTime)/1000
+            let speed = this.formatSize(parseInt(e.loaded/time))
+            onprogress(e,speed,time)
+          }
+        }
+        startTime = new Date().getTime()
+        xhr.open('post',path)
+        xhr.send(data)
+      },
+      uploadChunk(){
+        let chunkSize = 1024*1024*4
+        console.log(chunkSize)
+        let file = this.$refs.upload.files[0]
+        let fileSize = file.size
+        if(fileSize <= chunkSize){return}
+        let chunkCount = Math.ceil(fileSize/chunkSize)
+
+        let startTime = new Date().getTime()
+
+
+        let sendSize = 0
+
+        const onProgress= e=>{
+          // console.log(e)
+          let overSize = sendSize+e.loaded
+          let percent = ((overSize/fileSize)*100).toFixed(2)
+          let time = ((new Date().getTime()) - startTime)/1000
+          let speed = this.formatSize(parseInt(overSize/time))
+          this.percent = `${percent}%  ${speed}/s ${time}s`
+        }
+
+        const send_chunk = (chunkNum,path)=>{
+          if(chunkNum === chunkCount){return}
+          let start = chunkNum*chunkSize
+          let chunk = file.slice(start,start+chunkSize)
+
+          let xhr = new XMLHttpRequest()
+          xhr.open('post',path, true)
+          xhr.onreadystatechange = function(){
+            if(xhr.readyState === 4){
+              sendSize += chunkSize
+              send_chunk(chunkNum+1,path)
+            }
+          }
+          xhr.upload.onprogress = onProgress
+          xhr.send(chunk)
+        }
+
+        send_chunk(0,'/upload/img')
+
+
+      },
+
+    }
+  })
+
+  </script>
+</body>
+</html>
