@@ -29,13 +29,15 @@ export const msg = {
       content,
       type='warning',
       ok = ()=>{},
-      cancel = ()=>{}
+      cancel = ()=>{},
+      html = true,
     }=props
 
     let comProps = {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type,
+      dangerouslyUseHTMLString:html,
     }
     ElMessageBox.confirm(content,title,comProps)
       .then(ok)
@@ -51,9 +53,10 @@ export const msg = {
 
     let comProps = {
       confirmButtonText: '确定',
+      dangerouslyUseHTMLString:true,
       type,
     }
-    ElMessageBox.confirm(content,title,comProps)
+    ElMessageBox.alert(content,title,comProps)
       .then(ok)
   },
   notify:{

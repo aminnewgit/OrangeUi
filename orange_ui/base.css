@@ -128,30 +128,41 @@ html, body, #app {
   background-color: #fff;
   padding: 20px;
   z-index: 5501;
-
 }
 
 .c-modal-title{
   font-size: 18px;
 }
 
+.modal-padding{
+  padding: 10px 20px 20px 20px;
+}
+
+.com-warp{
+  padding: 20px;
+  /*height: 100%;*/
+  /*min-height: 776px;*/
+}
 .page-card {
   position: relative;
   width: 100%;
+  min-width: 1240px;
+
+  min-height: 826px;
   background-color: #fff;
   margin-bottom: 20px;
   border-radius: 6px;
   padding: 20px 20px 23px 20px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+
 }
 .page-card .el-select .el-input__inner{
   padding-right: 10px !important;
+
 }
 
 .base-page{
   min-width: 1200px;
-  padding: 20px;
-  margin: 20px;
   background: #fff;
   min-height: calc(100% - 40px);
 }
@@ -161,9 +172,11 @@ html, body, #app {
   margin-left: 20px;
 }
 
-.com-warp{
-  padding: 20px;
+.form-wrap{
+  padding: 20px 20px 20px 10px;
+  min-width: 600px;
 }
+
 .order-unpaid{
   color: #E6A23C
 }
@@ -185,4 +198,12 @@ html, body, #app {
 
 .el-scrollbar__view{
   height: 100%;
+}
+
+.c-table-top-btn-line .el-form-item{
+  margin-bottom: 0;
+}
+
+.table-btn{
+  margin-right: 20px;
 }

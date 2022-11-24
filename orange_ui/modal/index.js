@@ -159,6 +159,37 @@ export function openRightPopup(com,props={},modalProps={}){
 }
 
 
+export function mountedCom(com,props,z){
+  let container = document.createElement('div')
+  let id = 'c-modal-' + seed++
+  let comInstance
+  container.className = `c-modal-base-warp`
+  container.id = id
+  const appDefine = {
+    name:id,
+    setup(){
+      function render(){
+        comInstance = h(com,props)
+        return comInstance
+      }
+      return render
+    }
+  }
+  let a = createApp(appDefine,z)
+  a.mount(container)
+  document.body.appendChild(container)
+  modalDict[id] = a
+  return {
+    getCom(){
+      return comInstance.component.proxy
+    },
+    close(){
+      onClose(id,container,0)
+    }
+  }
+}
+
+
 const iconDict = {
   success:{cls:'el-icon-success',color:'green'},
   error:{cls:'el-icon-error',color:'red'},

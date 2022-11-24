@@ -32,7 +32,7 @@ export const AutoForm = {
         let pass = true
         for(let i=0;i<len;i++){
           let com = d.verifyList[i]
-          console.log(com)
+          // console.log(com)
           let expose = com.component.exposed
           let {verify} = expose
           if(! await verify()){pass=false}

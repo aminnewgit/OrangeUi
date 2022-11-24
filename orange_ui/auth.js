@@ -8,7 +8,7 @@ import {
 } from "@/lib/request.js";
 import {reactive} from "vue";
 import {api} from "@/api";
-import {clearWs} from "@/wsService";
+import {clearWs} from "@/ws/wsService.js";
 
 
 const storageKey = 'tokenData'
@@ -54,7 +54,7 @@ export function authLogin(cb){
   let props = {
     api:api.user.checkToken,
     success(_sd){
-      console.log('check toke success',_sd)
+      // console.log('check toke success',_sd)
       authData.sd = _sd;
       cb(authData.sd)
     }

@@ -5,8 +5,9 @@
                :size="item.size"
                :style="item.style"
                :class="item.class"
+               :disabled="item.disable"
                v-loading="item.loading"
-               @click="btnClick(item,scope)">{{ item.t }}
+               @click="btnClick(index,item)">{{ item.t }}
     </el-button>
   </template>
 </template>
@@ -34,15 +35,18 @@ export default {
             size: btn.size ? btn.size : 'mini',
             style: btn.style ? btn.style : '',
             class: btn.class ? btn.class : '',
-            loading: false
+            loading: false,
+            disable: false,
           })
         }
       })
       d.list = list
     })
 
-    function btnClick(item,scope){
-      item.btn.onClick(scope.row,item,scope)
+    function btnClick(index,item){
+      let {scope,field} = props
+      let btn = item.btn
+      btn.onClick(scope.row,item,field,scope)
     }
 
     return {

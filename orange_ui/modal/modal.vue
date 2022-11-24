@@ -16,10 +16,12 @@
                class="c-modal-header f ai-c jc-between">
             <div class="c-modal-title"
                  v-html="title"></div>
-            <div class="f ai-c jc-between">
-              <fullScreen v-if="full"></fullScreen>
-              <div class="c-modal-close-btn"
-                   @click="close"></div>
+            <div class="f ai-c jc-between c-modal-title-btn-line">
+<!--              <div class="c-modal-title-btn-line-icon"-->
+<!--                   @click="changeMax()"-->
+<!--                   :style="getMaxBtnStyle()" ></div>-->
+<!--              <div class="c-modal-title-btn-line-icon cmt-close" ></div>-->
+              <div class="c-modal-close-btn" @click="close"></div>
             </div>
           </div>
           <div class="c-modal-content" :style="GetWindowInfo">
@@ -34,6 +36,7 @@
 
 <script>
 import fullScreen from "./fullScreen.vue";
+import btnIconSet from '@/assets/btn_icon_set.png'
 export default {
   name: "modal",
   components: {fullScreen},
@@ -49,18 +52,18 @@ export default {
 
     className: {default: ''},
     show: {default: true},
-    full: {default: false}
+    full: {default: false},
+    Maximize:{default: false},
   },
-  data() {
-    return {
-      GetWindowInfo: {
-        // paddingBottom: '10px',
-        overflow: 'auto',
-        maxHeight: '',  //动态获取content高度
-        maxWidth: ''	//动态获取content宽度
-      },
-    }
-  },
+  data() {return {
+    GetWindowInfo: {
+      // paddingBottom: '10px',
+      overflow: 'auto',
+      // maxHeight: '',     //动态获取content高度
+      // maxWidth: '',   	 //动态获取content宽度
+    },
+    isMaxSize: false,
+  }},
   methods: {
     close() {
       this.$emit('update:show', false)
@@ -74,6 +77,19 @@ export default {
       // 获取浏览器高度，减去顶部导航栏的值70（可动态获取）,再减去head-DIV高度值80
       this.GetWindowInfo.maxHeight = (window.innerHeight - 100) + 'px'
       this.GetWindowInfo.maxWidth = window.innerWidth + 'px'
+    },
+    getMaxBtnStyle(){
+      let style = {}
+      style.background = this.isMaxSize ?
+       `url(${btnIconSet}) no-repeat -31px 0` :
+       `url(${btnIconSet}) no-repeat -80px 0`
+      return style
+    },
+
+    changeMax(){
+      this.isMaxSize = ! this.isMaxSize
+      if(this.isMaxSize){}
+      else{}
     }
   },
   created(){
@@ -83,6 +99,7 @@ export default {
   destroyed(){
     window.removeEventListener('resize', this.GetWindow)
   }
+
 }
 </script>
 
@@ -119,7 +136,7 @@ export default {
   flex-direction: column;
 
   //padding: 20px;
-  min-width: 30rem;
+  //min-width: 30rem;
   position: relative;
   /* transform: translateY(-10rem); */
 
@@ -132,9 +149,8 @@ export default {
   width: 100%;
   font-size: 1.4rem;
   line-height: 1.4rem;
-  margin-bottom: 2rem;
   position: relative;
-  padding: 20px 20px 0 20px;
+  padding: 20px 20px 15px 20px;
 }
 
 .c-modal-title::after {
@@ -142,19 +158,22 @@ export default {
   height: 0.1rem;
   background-color: #0fc19f;
   position: absolute;
-  bottom: -15px;
+  bottom: 0;
   left: 0;
   right: 0;
 }
 
 .c-modal-close-btn {
-  color: cornflowerblue;
+  //color: cornflowerblue;
+  color: #2e2d3c;
   cursor: pointer;
   font-weight: bold;
+  margin-left: 16px;
 }
 
 .c-modal-close-btn::before {
   content: "\2715";
+  font-size: 20px;
 }
 
 .mask-enter-from,
@@ -165,6 +184,26 @@ export default {
 .mask-enter-active,
 .mask-leave-active {
   transition: all 0.25s ease;
+}
+
+.c-modal-title-btn-line{
+  color: #676a6c;
+  &-icon{
+    width: 16px;
+    height: 16px;
+    text-decoration: none;
+    margin-left: 16px;
+    color: #676a6c;
+    cursor: pointer;
+  }
+  .cmt-close{
+    background: url('@/assets/btn_icon_set.png') 0 0;
+    width: 16px;
+    height: 16px;
+  }
+  .cmt-close:hover{
+    background: url('@/assets/btn_icon_set.png') -48px 0;
+  }
 }
 
 /*窗口动画*/

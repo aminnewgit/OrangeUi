@@ -208,3 +208,5 @@ export function objToFormData(obj) {
 export function firstLetterUpper(word){
   return word.slice(0, 1).toUpperCase() + word.slice(1)
 }
+
+
